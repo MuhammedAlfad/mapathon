@@ -25,7 +25,6 @@ print("Model loaded on", device)
 # Option 1: video file
 VIDEO_PATH = r"C:\Users\USER\Desktop\parking_area_model\CCTV Camera Based Parking Guidance for Rooftop Parking Lot - TIS APGS (1080p, h264).mp4"
 
-
 # Option 2: webcam (uncomment below)
 # cap = cv2.VideoCapture(0)
 
