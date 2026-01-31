@@ -7,16 +7,20 @@ def build_grid(size, obstacles):
         minx, miny, maxx, maxy = map(int, poly.bounds)
         grid[miny:maxy, minx:maxx] = 0
     return grid
-
-def astar(grid, start, goal):
+def astar(grid, start, goal, max_steps=20000):
     h, w = grid.shape
     pq = [(0, start)]
     came = {start: None}
     cost = {start: 0}
 
+    steps = 0
     moves = [(1,0),(-1,0),(0,1),(0,-1)]
 
     while pq:
+        steps += 1
+        if steps > max_steps:
+            break
+
         _, current = heapq.heappop(pq)
         if current == goal:
             break
@@ -31,9 +35,10 @@ def astar(grid, start, goal):
                     heapq.heappush(pq, (priority, (nx,ny)))
                     came[(nx,ny)] = current
 
+    # reconstruct
     path = []
     cur = goal
-    while cur:
+    while cur in came:
         path.append(cur)
-        cur = came.get(cur)
+        cur = came[cur]
     return path[::-1]

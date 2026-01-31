@@ -1,4 +1,5 @@
 from shapely.geometry import box
+from shapely.ops import unary_union
 
 def compute_free_space(parking_area, vehicle_polygons):
     """
@@ -9,11 +10,18 @@ def compute_free_space(parking_area, vehicle_polygons):
     if not vehicle_polygons:
         return parking_area
 
-    occupied = vehicle_polygons[0]
-    for v in vehicle_polygons[1:]:
-        occupied = occupied.union(v)
+    # Make polygons valid and union them
+    valid_polygons = [poly.buffer(0) for poly in vehicle_polygons if poly.is_valid]
+    if not valid_polygons:
+        return parking_area
 
-    return parking_area.difference(occupied)
+    occupied = unary_union(valid_polygons)
+
+    try:
+        return parking_area.difference(occupied)
+    except Exception as e:
+        print(f"Geometry error in difference: {e}")
+        return parking_area  # fallback
 
 
 def generate_slots(free_space, car_len_px, car_wid_px, gap=5):
