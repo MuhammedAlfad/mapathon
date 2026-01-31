@@ -1,10 +1,20 @@
 from shapely.geometry import box
 
 def compute_free_space(parking_area, vehicle_polygons):
+    """
+    Computes free parking space by subtracting occupied vehicle areas
+    """
+
+    # ✅ If no vehicles detected, entire area is free
+    if not vehicle_polygons:
+        return parking_area
+
     occupied = vehicle_polygons[0]
     for v in vehicle_polygons[1:]:
         occupied = occupied.union(v)
+
     return parking_area.difference(occupied)
+
 
 def generate_slots(free_space, car_len_px, car_wid_px, gap=5):
     slots = []
